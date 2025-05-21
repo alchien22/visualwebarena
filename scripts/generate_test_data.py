@@ -2,11 +2,17 @@
 Generate the test data"""
 import json
 import os
+import argparse
 
 from browser_env.env_config import *
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--model_family', type=str, required=True)
+    return parser.parse_args()
 
-def main() -> None:
+def main(model_family='gpt') -> None:
+    args = parse_args()
     DATASET = os.environ["DATASET"]
     if DATASET == "webarena":
         print("DATASET: webarena")
@@ -46,6 +52,15 @@ def main() -> None:
     else:
         raise ValueError(f"Dataset not implemented: {DATASET}")
         
+    if args.model_family == "gpt":
+        inp_paths = ["config_files/vwa/geo_task_gpt.raw.json"]
+    elif args.model_family == "gemini":
+        inp_paths = ["config_files/vwa/geo_task_gemini.raw.json"]
+    elif args.model_family == 'qwen':
+        inp_paths = ["config_files/vwa/geo_task_qwen.raw.json"]
+    elif args.model_family == 'internvl':
+        inp_paths = ["config_files/vwa/geo_task_internvl.raw.json"]
+    
     for inp_path in inp_paths:
         output_dir = inp_path.replace('.raw.json', '')
         os.makedirs(output_dir, exist_ok=True)
